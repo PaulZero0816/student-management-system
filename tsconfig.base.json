@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "outDir": ".tsbuild",
+    "rootDir": "./",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "pretty": true,
+    "noImplicitAny": true,
+    "target": "es6",
+    "strict": true,
+    "composite": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "types": ["node"],
+    "skipLibCheck": true,
+    "lib": ["dom", "es5", "es6", "es2019"]
+  },
+  "exclude": ["node_modules", "**/__decl"]
+}

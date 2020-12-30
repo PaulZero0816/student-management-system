@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base",
+  "include": ["./**/*", "./**/*.json"],
+  "compilerOptions": {
+    "jsx": "react",
+    "types": ["node"],
+    "sourceMap": true,
+    "removeComments": true,
+    "lib": ["es5", "es6", "dom", "es2019"],
+    "baseUrl": "."
+  }
+}

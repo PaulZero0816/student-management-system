@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.base",
+  "include": ["**/*", "**/*.json"],
+  "exclude": ["node_modules"],
+  "references": [{ "path": "./src/client" }, { "path": "./src/server" }]
+}

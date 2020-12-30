@@ -1,49 +1,87 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const path = require("path");
+const fs = require("fs");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const webpack = require("webpack");
 
-const outputDirectory = 'dist';
+const outputDirectory = "dist";
 
-module.exports = {
-  entry: ['babel-polyfill', './src/client/index.js'],
-  output: {
-    path: path.join(__dirname, outputDirectory),
-    filename: 'bundle.js'
-  },
-  module: {
-    rules: [{
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
+const localProxySever = "http://[::1]:3000";
+
+module.exports = (_, arg) => {
+  return {
+    mode: arg.mode,
+    entry: {
+      app: "./src/client/index.tsx",
+    },
+    output: {
+      path: path.join(__dirname, outputDirectory),
+      filename: "[name].bundle.[hash].js",
+    },
+    resolve: {
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+    },
+    devtool: "hidden-source-map",
+    module: {
+      rules: [
+        {
+          test: /\.(ts|tsx)$/,
+          exclude: /node_modules|__tests__/,
+          use: [
+            {
+              loader: "awesome-typescript-loader",
+              options: {
+                useCache: true,
+                useBabel: true,
+                babelCore: "@babel/core",
+              },
+            },
+          ],
+        },
+        {
+          test: /\.css$/,
+          use: ["style-loader", "css-loader"],
+        },
+        {
+          test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+          loader: "url-loader?limit=100000",
+        },
+      ],
+    },
+    devServer: {
+      contentBase: "./src/client/public",
+      port: 3000,
+      open: true,
+      proxy: {
+        "/api/**": {
+          target: localProxySever,
+          secure: false,
+          headers: {
+            Connection: "keep-alive",
+          },
+        },
+        "/auth/**": {
+          target: localProxySever,
+          secure: false,
+          headers: {
+            Connection: "keep-alive",
+          },
+        },
       },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+      watchOptions: {
+        ignored: [path.resolve(__dirname, "node_modules"), "**/__tests__/**/*"],
       },
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=100000'
-      }
-    ]
-  },
-  resolve: {
-    extensions: ['*', '.js', '.jsx']
-  },
-  devServer: {
-    port: 3000,
-    open: true,
-    historyApiFallback: true,
-    proxy: {
-      '/api': 'http://localhost:8080'
-    }
-  },
-  plugins: [
-    new CleanWebpackPlugin([outputDirectory]),
-    new HtmlWebpackPlugin({
-      template: './public/index.html',
-      favicon: './public/favicon.ico'
-    })
-  ]
+      compress: true,
+    },
+    plugins: [
+      new CleanWebpackPlugin([outputDirectory]),
+      new HtmlWebpackPlugin({
+        inject: "body",
+        template: "./src/client/public/index.html",
+        filename: "./index.html",
+        favicon: "./src/client/public/logo.png",
+        chunks: ["app"],
+      }),
+    ],
+  };
 };
