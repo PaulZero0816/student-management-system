@@ -5,26 +5,21 @@ import path from "path";
 
 export default (controllerFolder: string, controllerClsToIgnore?: any) => {
   // Find all controllers
-  // @ts-ignore
-  const controllers = glob
-    .sync(controllerFolder)
+  const controllers = glob.sync(controllerFolder).map((file) => {
+    const f = require(path.resolve(file));
+    if (!f.default) {
+      return;
+    }
+    const c = f.default;
     // @ts-ignore
-    .map((file) => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const f = require(path.resolve(file));
-      if (!f.default) {
-        return;
-      }
-      const c = f.default;
-      // @ts-ignore
-      if (
-        c.prototype instanceof SharedBaseController &&
-        c !== SharedBaseController &&
-        (!controllerClsToIgnore || c !== controllerClsToIgnore)
-      ) {
-        return c;
-      }
-    });
+    if (
+      c.prototype instanceof SharedBaseController &&
+      c !== SharedBaseController &&
+      (!controllerClsToIgnore || c !== controllerClsToIgnore)
+    ) {
+      return c;
+    }
+  });
   // @ts-ignore
   const router = new Router();
 

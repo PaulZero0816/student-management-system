@@ -16,7 +16,8 @@ module.exports = (_, arg) => {
     },
     output: {
       path: path.join(__dirname, outputDirectory),
-      filename: "[name].bundle.[hash].js",
+      filename: "app.bundle.js",
+      publicPath: "/"
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
@@ -50,8 +51,12 @@ module.exports = (_, arg) => {
     },
     devServer: {
       contentBase: "./src/client/public",
-      port: 3000,
+      historyApiFallback: true,
+      port: 8443,
       open: true,
+      headers: {
+        Connection: 'keep-alive',
+      },
       proxy: {
         "/api/**": {
           target: localProxySever,

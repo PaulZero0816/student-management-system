@@ -60,9 +60,8 @@ export class BaseAPI {
     body?: RequestInit["body"],
     options?: RequestInit
   ) {
-    const fetchUrl = `${this.basePrefix}${
-      this.prefix ? `/${this.prefix}` : ""
-    }/${url}`;
+    const fetchUrl = `${this.basePrefix}${this.prefix ? `/${this.prefix}` : ""
+      }/${url}`;
     const startTime = performance.now();
     return fetch(fetchUrl, {
       method: method,
@@ -77,13 +76,13 @@ export class BaseAPI {
         if (e instanceof TypeError) {
           const newRelicError = new Error(
             "Throw error in api call: " +
-              fetchUrl +
-              " | " +
-              e.name +
-              " | " +
-              e.message +
-              " | " +
-              e.stack
+            fetchUrl +
+            " | " +
+            e.name +
+            " | " +
+            e.message +
+            " | " +
+            e.stack
           );
           throw {
             message: e.name + " | " + e.message,
@@ -91,7 +90,7 @@ export class BaseAPI {
         }
         // Normal api error
         if (e?.status === 401) {
-          localStorage.removeItem("clef_is_login");
+          localStorage.removeItem("user_is_login");
           if (!window.location.pathname.includes("/login/")) {
             window.location.reload();
           }

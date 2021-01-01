@@ -8,7 +8,6 @@ import {
 import defaultTheme from "./themes";
 import { SnackbarProvider } from "notistack";
 import PATH from "./constants/path";
-import AppLayout from "./components/Layout";
 import Login from "./pages/login/Login";
 import StudentManagement from "./pages/studentManagement";
 
@@ -70,6 +69,16 @@ class App extends React.Component {
     super(props);
   }
 
+  componentDidCatch(
+    error: Error,
+    errorInfo: {
+      componentStack: string;
+    }
+  ): void {
+    const newErrorMessage = `Error from React ErrorBoundary: ${error.message} \n ${errorInfo.componentStack}`;
+    console.log(newErrorMessage);
+  }
+
   render() {
     return (
       <MuiThemeProvider theme={theme}>
@@ -86,9 +95,11 @@ class App extends React.Component {
                 path="/"
                 render={() => <Redirect to={PATH.studentInfo} />}
               />
-              {/* <PrivateRoute path="/app" component={AppLayout} />
-              <PublicRoute path="/login" component={Login} /> */}
-              <Route path={PATH.studentInfo} component={StudentManagement} />
+              <Route
+                exact
+                path={PATH.studentInfo}
+                component={StudentManagement}
+              />
             </Switch>
           </BrowserRouter>
         </SnackbarProvider>

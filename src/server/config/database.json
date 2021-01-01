@@ -1,0 +1,10 @@
+{
+  "local": {
+    "host": "106.55.151.203",
+    "port": 3306,
+    "database": "student_management_system",
+    "dialect": "mysql",
+    "username": "paul",
+    "password": "19950816qzq"
+  }
+}

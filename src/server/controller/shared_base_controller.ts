@@ -1,13 +1,18 @@
+// @ts-ignore
 import Parameter from "parameter";
-import { ParamType } from "../types/controller";
-import { Context, Session } from "../types/koa";
 import { ClientError } from "../middlewares/clientError";
-
-export interface SharedController {
+import { Context, Session } from "../types/koa";
+import { ParamType } from "../types/controller";
+import { DataAccess, DataAccessKey } from "../dataaccess";
+import DataaccessFactory from "../dataaccess/dataaccess_factory";
+import { Transaction } from "sequelize";
+export interface Controller {
   getPath(): string | void;
   getMethod(): string | void;
   getDescription(): string | void;
   getSession(): Session;
+  getDataAccess<V extends DataAccessKey>(name: V): DataAccess[V];
+  getMultiDataAccess(...args: DataAccessKey[]): Partial<DataAccess>;
   getUserId(): string;
   getOrgId(): number;
   getContext(): Context;
@@ -71,7 +76,7 @@ const paramParsers: {
   },
 ];
 
-abstract class SharedBaseController implements SharedController {
+abstract class BaseController implements Controller {
   protected ctx?: Context;
 
   /*
@@ -85,14 +90,7 @@ abstract class SharedBaseController implements SharedController {
       get, post, put ...
      */
   getMethod(): string {
-    throw new Error("getMethod not implemented");
-  }
-
-  /*
-      api version
-     */
-  getVersion(): number | undefined {
-    return this?.ctx?.request.version;
+    throw "getMethod not implemented";
   }
 
   clientError(message: string, httpStatusCode = 400, errorCode = -1): never {
@@ -109,6 +107,24 @@ abstract class SharedBaseController implements SharedController {
 
   getSession(): Session {
     return this?.ctx?.session as Session;
+  }
+
+  getDataAccess<V extends DataAccessKey>(
+    name: V,
+    trx?: Transaction
+  ): DataAccess[V] {
+    return DataaccessFactory.getDataAccess(this.ctx!, name, trx);
+  }
+
+  /**
+   * Return multi data access as an object
+   * @returns {Object} DA dataaccess object
+   * @param args
+   */
+  getMultiDataAccess<K extends DataAccessKey>(
+    ...args: K[]
+  ): Pick<DataAccess, K> {
+    return DataaccessFactory.getMultiDataAccess(this.ctx!, args);
   }
 
   getUserId() {
@@ -130,15 +146,6 @@ abstract class SharedBaseController implements SharedController {
     return false;
   }
 
-  getParams(ctx: Context) {
-    const method = ctx.method.toUpperCase();
-    let params: Record<string, any> = {};
-    if (!["GET", "HEAD"].includes(method)) {
-      params = ctx.request.body || {};
-    }
-    return Object.assign(params, ctx.request.query || {}, ctx.params || {});
-  }
-
   /*
     Type API can be found here: https://github.com/node-modules/parameter
     For eg, int or int?
@@ -147,7 +154,17 @@ abstract class SharedBaseController implements SharedController {
     if (!this.ctx) {
       throw "Can not trigger getParam before calling handle";
     }
-    const params = this.getParams(this.ctx);
+    const method = this.ctx.method.toUpperCase();
+    let params: Record<string, any> = {};
+    if (!["GET", "HEAD"].includes(method)) {
+      params = this.ctx.request.body || {};
+    }
+    params = Object.assign(
+      params,
+      this.ctx.request.query || {},
+      this.ctx.params || {}
+    );
+
     const paramValue = params[paramName];
     // for every parser, if match type and validation,
     // value will be adjusted into the right format
@@ -182,12 +199,12 @@ abstract class SharedBaseController implements SharedController {
     return res;
   }
 
-  abstract async getData(): Promise<Record<string, any> | void | null | string>;
+  abstract getData(): Promise<Record<string, any> | void | null | string>;
 
   async handle(ctx: Context) {
     this.ctx = ctx;
-    return this.getData();
+    return await this.getData();
   }
 }
 
-export default SharedBaseController;
+export default BaseController;

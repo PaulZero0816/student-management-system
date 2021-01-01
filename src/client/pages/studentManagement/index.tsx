@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
 import MaterialTable from "material-table";
+import { useStudentsInfoApi } from "../../hooks/useStudentApi";
 
 export interface Props {}
 
@@ -14,6 +15,9 @@ const useStyles = makeStyles(() => ({
 
 const StudentManagement: React.FC<Props> = () => {
   const styles = useStyles();
+  const orgId = 1;
+  const [studentInfo] = useStudentsInfoApi({ orgId });
+  console.log(studentInfo);
   return (
     <MaterialTable
       title="Simple Action Preview"
