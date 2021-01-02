@@ -52,7 +52,7 @@ module.exports = (_, arg) => {
     devServer: {
       contentBase: "./src/client/public",
       historyApiFallback: true,
-      port: 8443,
+      port: 8080,
       open: true,
       headers: {
         Connection: 'keep-alive',

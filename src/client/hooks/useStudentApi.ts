@@ -11,3 +11,15 @@ export const [useStudentsInfoApi, refreshStudentsInfoApiCache] = fetchHookFactor
     maxAge: 1000 * 60 * 30, // 30 min
   },
 );
+
+export const createNewStudent = async (
+  student: {
+    phone: string;
+    wechat: string;
+    name: string;
+    comment: string;
+  }
+) => {
+  await StudentAPI.createStudent(student);
+  refreshStudentsInfoApiCache({ keys: 'refresh-all', swr: true });
+};

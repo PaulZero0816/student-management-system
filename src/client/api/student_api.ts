@@ -4,15 +4,20 @@ import { Student } from "../types";
 const StudentAPIurlPrefix = "student";
 
 class StudentAPI extends BaseAPI {
-  async getStudentsByOrgId(id: number): Promise<ApiResponse<Student[]>> {
+  async getStudentsByOrgId(id: number): Promise<Student[]> {
     const response = await this.get('get_students_info');
-    return { ...response, data: response.data };
+    return response.data;
   }
 
-  createMedia = async (
-    student: Partial<Student>
+  createStudent = (
+    student: {
+      phone: string;
+      wechat: string;
+      name: string;
+      comment: string;
+    },
   ): Promise<ApiResponse<Student>> => {
-    return await this.postJSON("create", student);
+    return this.postJSON("create", { student });
   };
 }
 

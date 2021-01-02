@@ -15,17 +15,26 @@ class PostCreateStudentController extends BaseController {
   }
 
   async getData() {
-    const studentsDA = this.getDataAccess("students");
-    const student = await studentsDA.create({
-      name: "paul",
-      orgId: 1,
-      comment: "test",
-      status: StudentStatus.ACTIVE,
-      phone: "138708753121",
-      wechat: "qzq407594143",
+    const {
+      student
+    }: {
+      student: {
+        phone: string,
+        wechat: string,
+        name: string,
+        comment: string,
+      }
+    } = this.params({
+      student: 'object?',
     });
     console.log(student);
-    return student;
+    const studentsDA = this.getDataAccess("students");
+    const newStudent = await studentsDA.create({
+      orgId: 1,
+      status: StudentStatus.ACTIVE,
+      ...student
+    });
+    return newStudent;
   }
 }
 

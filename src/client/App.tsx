@@ -10,6 +10,7 @@ import { SnackbarProvider } from "notistack";
 import PATH from "./constants/path";
 import Login from "./pages/login/Login";
 import StudentManagement from "./pages/studentManagement";
+import AppWrapper from "./component/AppWrapper";
 
 const theme = createMuiTheme(defaultTheme);
 
@@ -88,20 +89,22 @@ class App extends React.Component {
           maxSnack={3}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          <BrowserRouter>
-            <Switch>
-              <Route
-                exact
-                path="/"
-                render={() => <Redirect to={PATH.studentInfo} />}
-              />
-              <Route
-                exact
-                path={PATH.studentInfo}
-                component={StudentManagement}
-              />
-            </Switch>
-          </BrowserRouter>
+          <AppWrapper>
+            <BrowserRouter>
+              <Switch>
+                <Route
+                  exact
+                  path="/"
+                  render={() => <Redirect to={PATH.studentInfo} />}
+                />
+                <Route
+                  exact
+                  path={PATH.studentInfo}
+                  component={StudentManagement}
+                />
+              </Switch>
+            </BrowserRouter>
+          </AppWrapper>
         </SnackbarProvider>
       </MuiThemeProvider>
     );
