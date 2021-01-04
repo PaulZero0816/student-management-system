@@ -16,24 +16,34 @@ class PostCreateStudentController extends BaseController {
 
   async getData() {
     const {
-      student
+      student,
+      orgId,
     }: {
       student: {
         phone: string,
         wechat: string,
         name: string,
         comment: string,
+        course: number,
       }
+      orgId: number
     } = this.params({
       student: 'object?',
+      orgId: 'int',
     });
-    console.log(student);
     const studentsDA = this.getDataAccess("students");
+    const courseLogDA = this.getDataAccess("courseLogs");
     const newStudent = await studentsDA.create({
-      orgId: 1,
+      orgId: orgId,
       status: StudentStatus.ACTIVE,
       ...student
     });
+    await courseLogDA.create({
+      studentId: newStudent.id,
+      comment: `初始化课时, 剩余课时 ${student.course}`,
+      user: 1,
+      orgId: orgId,
+    })
     return newStudent;
   }
 }

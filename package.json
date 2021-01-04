@@ -33,6 +33,7 @@
     "@types/react-redux": "^7.1.5",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-textarea-autosize": "^4.3.5",
+    "@types/react-window": "^1.8.2",
     "@types/recompose": "^0.30.7",
     "@types/tinycolor2": "^1.4.2",
     "babel-polyfill": "^6.26.0",
@@ -56,6 +57,7 @@
     "react-phone-number-input": "^3.1.8",
     "react-pro-sidebar": "^0.4.4",
     "react-router-dom": "^5.2.0",
+    "react-window": "^1.8.6",
     "sequelize": "^5.21.8",
     "uuid": "^7.0.3"
   },

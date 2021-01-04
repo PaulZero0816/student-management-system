@@ -7,6 +7,15 @@ import { Context } from "../types/koa";
 import organizationModule, {
   OrganizationDataAccess,
 } from "./organization_dataaccess";
+import userModule, {
+  UserDataAccess,
+} from "./user_dataaccess";
+import courseModule, {
+  CourseDataAccess,
+} from "./course_dataaccess";
+import courseLogModule, {
+  CourseLogDataAccess,
+} from "./course_log_dataaccess";
 export * from "./dataaccess_factory";
 
 export type BuildQuery = (query?: Record<string, any>) => any;
@@ -16,6 +25,9 @@ export interface DataAccess {
   conn: any;
   students: StudentDataAccess;
   organizations: OrganizationDataAccess;
+  users: UserDataAccess;
+  courses: CourseDataAccess;
+  courseLogs: CourseLogDataAccess;
 }
 export type DataAccessKey = keyof DataAccess;
 export type DataAccessBuilderProps = {
@@ -45,6 +57,9 @@ const dataAccess: (ctx: Context, trx?: Sequelize.Transaction) => DataAccess = (
     conn: db.sequelize,
     students: studentModule(dataAccessProps),
     organizations: organizationModule(dataAccessProps),
+    users: userModule(dataAccessProps),
+    courses: courseModule(dataAccessProps),
+    courseLogs: courseLogModule(dataAccessProps),
   };
 };
 

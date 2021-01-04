@@ -20,6 +20,18 @@ const dataAccessBuilder = (props: DataAccessBuilderProps) => {
       }
     },
 
+    update: async (id: number, studentSpec: Partial<Student>): Promise<StudentModel> => {
+      try {
+        const student = await db.students.update(studentSpec, buildQuery({
+          where: { id: id }
+        }));
+        return student;
+      } catch (e) {
+        console.log(e);
+        throw new ClientError("Update student Failed");
+      }
+    },
+
     findById: async (
       studentId: number,
       orgId: number
@@ -41,13 +53,28 @@ const dataAccessBuilder = (props: DataAccessBuilderProps) => {
       );
     },
 
-    findByIds: async (orgId: number, ids: number[]) => {
+    findByIds: async (orgId: number, ids: number[]): Promise<StudentModel[]> => {
       return db.students.findAll(
         buildQuery({
           where: { orgId, id: { [Op.in]: ids } },
           raw: true,
         })
       );
+    },
+
+    bulkUpsert: (student: Partial<StudentModel>[]) => {
+      try {
+        return db.students.bulkCreate(
+          student,
+          buildQuery({
+            returning: true,
+            updateOnDuplicate: ['course'],
+          }),
+        );
+      } catch (e) {
+        console.log(e);
+        throw new ClientError("Update student Failed");
+      }
     },
   };
 };

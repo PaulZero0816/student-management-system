@@ -16,7 +16,7 @@ module.exports = (_, arg) => {
     },
     output: {
       path: path.join(__dirname, outputDirectory),
-      filename: "app.bundle.js",
+      filename: "bundle.js",
       publicPath: "/"
     },
     resolve: {

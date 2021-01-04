@@ -14,8 +14,15 @@ class GetStudentsInfoController extends BaseController {
   }
 
   async getData() {
+    const {
+      orgId,
+    }: {
+      orgId: number
+    } = this.params({
+      orgId: 'int',
+    });
     const studentsDA = this.getDataAccess("students");
-    const students = await studentsDA.findByOrgId(1);
+    const students = await studentsDA.findByOrgId(orgId);
     return students;
   }
 }

@@ -1268,6 +1268,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-window@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.npm.taobao.org/@types/react-window/download/@types/react-window-1.8.2.tgz#a5a6b2762ce73ffaab7911ee1397cf645f2459fe"
+  integrity sha1-paaydiznP/qreRHuE5fPZF8kWf4=
+  dependencies:
+    "@types/react" "*"
+
 "@types/react@*", "@types/react@^17.0.0":
   version "17.0.0"
   resolved "https://registry.npm.taobao.org/@types/react/download/@types/react-17.0.0.tgz#5af3eb7fad2807092f0046a1302b7823e27919b8"
@@ -5452,7 +5459,7 @@ mem@^4.0.0:
     mimic-fn "^2.0.0"
     p-is-promise "^2.0.0"
 
-memoize-one@^5.1.1:
+"memoize-one@>=3.1.1 <6", memoize-one@^5.1.1:
   version "5.1.1"
   resolved "https://registry.npm.taobao.org/memoize-one/download/memoize-one-5.1.1.tgz#047b6e3199b508eaec03504de71229b8eb1d75c0"
   integrity sha1-BHtuMZm1COrsA1BN5xIpuOsddcA=
@@ -6772,6 +6779,14 @@ react-transition-group@^4.0.0, react-transition-group@^4.4.0:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-window@^1.8.6:
+  version "1.8.6"
+  resolved "https://registry.npm.taobao.org/react-window/download/react-window-1.8.6.tgz#d011950ac643a994118632665aad0c6382e2a112"
+  integrity sha1-0BGVCsZDqZQRhjJmWq0MY4LioRI=
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    memoize-one ">=3.1.1 <6"
 
 react@^16.5.2:
   version "16.14.0"

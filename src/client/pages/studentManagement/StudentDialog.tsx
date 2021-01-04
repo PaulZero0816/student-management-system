@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 import { Student } from "../../types";
-import { createNewStudent } from "../../hooks/useStudentApi";
+import { createNewStudent, updateStudent } from "../../hooks/useStudentApi";
 
 export interface Props {
   title: string;
@@ -23,9 +23,6 @@ export interface Props {
 }
 
 const useStyles = makeStyles((theme) => ({
-  notAvailableCount: {
-    color: "#c3bcbc",
-  },
   typography: {
     fontWeight: 600,
     marginTop: theme.spacing(3),
@@ -55,10 +52,6 @@ const useStyles = makeStyles((theme) => ({
   button: {
     textTransform: "none",
   },
-  alerts: {
-    marginBottom: theme.spacing(5),
-    borderRadius: 8,
-  },
   dialogContainer: {
     padding: theme.spacing(5),
   },
@@ -86,10 +79,12 @@ const StudentDialog: React.FC<Props> = ({ title, onClose, student, type }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [isModifyingStudent, setIsModifyingStudent] = useState(false);
   const [studentInfo, setStudentInfo] = useState<{
+    id?: number;
     phone: string;
     wechat: string;
     name: string;
     comment: string;
+    course: number;
   }>(
     student
       ? student
@@ -98,6 +93,7 @@ const StudentDialog: React.FC<Props> = ({ title, onClose, student, type }) => {
           wechat: "",
           name: "",
           comment: "",
+          course: 0,
         }
   );
   return (
@@ -166,7 +162,7 @@ const StudentDialog: React.FC<Props> = ({ title, onClose, student, type }) => {
                 value={studentInfo.phone}
                 inputProps={{
                   className: styles.input,
-                  maxLength: 11, // max length for task name
+                  maxLength: 11,
                 }}
                 classes={{
                   root: styles.inputRoot,
@@ -178,6 +174,31 @@ const StudentDialog: React.FC<Props> = ({ title, onClose, student, type }) => {
                   setStudentInfo({
                     ...studentInfo,
                     phone: e.target?.value as string,
+                  });
+                }}
+                size="small"
+              />
+              <Typography variant="subtitle2" className={styles.typography}>
+                课时
+              </Typography>
+              <TextField
+                variant="outlined"
+                fullWidth
+                value={studentInfo.course}
+                inputProps={{
+                  className: styles.input,
+                  maxLength: 11,
+                }}
+                classes={{
+                  root: styles.inputRoot,
+                }}
+                onChange={(e) => {
+                  for (const char of e.target.value) {
+                    if (char < "0" || char > "9") return;
+                  }
+                  setStudentInfo({
+                    ...studentInfo,
+                    course: Number(e.target?.value as string),
                   });
                 }}
                 size="small"
@@ -234,7 +255,28 @@ const StudentDialog: React.FC<Props> = ({ title, onClose, student, type }) => {
                         )
                         .finally(() => setIsModifyingStudent(false));
                     }
-                  : () => {}
+                  : () => {
+                      const message = validateStudent(studentInfo);
+                      if (message !== "" || !studentInfo.id) {
+                        enqueueSnackbar(message, {
+                          variant: "error",
+                        });
+                        return;
+                      }
+                      setIsModifyingStudent(true);
+                      updateStudent(studentInfo.id, studentInfo)
+                        .then(() =>
+                          enqueueSnackbar("修改学生成功", {
+                            variant: "success",
+                          })
+                        )
+                        .catch(() =>
+                          enqueueSnackbar("修改学生失败", {
+                            variant: "error",
+                          })
+                        )
+                        .finally(() => setIsModifyingStudent(false));
+                    }
               }
             >
               {title}

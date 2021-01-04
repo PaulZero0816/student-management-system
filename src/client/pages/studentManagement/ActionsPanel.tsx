@@ -5,6 +5,7 @@ import { useSnackbar } from "notistack";
 interface Props {
   onCreateNewClick: () => void;
   onRegisterClick: () => void;
+  onModifyCourseClick: () => void;
 }
 
 const useStyles = makeStyles(() => ({
@@ -17,6 +18,7 @@ const useStyles = makeStyles(() => ({
 const ActionsPanel: React.FC<Props> = ({
   onCreateNewClick,
   onRegisterClick,
+  onModifyCourseClick,
 }) => {
   const styles = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -30,9 +32,18 @@ const ActionsPanel: React.FC<Props> = ({
         </Grid>
       </Grid>
       <Grid item container justify="flex-end" xs={6} spacing={1}>
+        <Grid key={"modify-course"} item>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={onModifyCourseClick}
+          >
+            添加/修改课程
+          </Button>
+        </Grid>
         <Grid key={"add-new-student"} item>
           <Button
-            variant="contained"
+            variant="outlined"
             color="secondary"
             onClick={onCreateNewClick}
           >

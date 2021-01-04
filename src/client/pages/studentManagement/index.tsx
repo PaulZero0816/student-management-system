@@ -18,10 +18,14 @@ import FirstPage from "@material-ui/icons/FirstPage";
 import LastPage from "@material-ui/icons/LastPage";
 import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
+import Book from "@material-ui/icons/Book";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import ActionsPanel from "./ActionsPanel";
 import { useSnackbar } from "notistack";
 import StudentDialog from "./StudentDialog";
+import CourseDialog from "./CourseDialog";
+import StudentLogDialog from "./StudentLogDialog";
+import SignDialog from "./SignDialog";
 
 export interface Props {}
 
@@ -39,11 +43,24 @@ const StudentManagement: React.FC<Props> = () => {
   const [studentInfo, studentInfoLoading] = useStudentsInfoApi({ orgId });
   const { enqueueSnackbar } = useSnackbar();
   const [newStudentDialogOpen, setNewStudentDialogOpen] = useState(false);
+  const [editStudentDialogOpen, setEditStudentDialogOpen] = useState(false);
+  const [courseDialogOpen, setCourseDialogOpen] = useState(false);
+  const [signDialogOpen, setSignDialogOpen] = useState(false);
+  const [logDialogOpen, setLogDialogOpen] = useState(false);
+  const [modifiedStudent, setModifiedStudent] = useState<Student | null>(null);
+  const [logStudentId, setLogStudentId] = useState<number | null>(null);
   if (studentInfoLoading || !studentInfo) {
     return <CircularProgress />;
   }
   return (
     <>
+      {signDialogOpen && (
+        <SignDialog
+          onClose={() => {
+            setSignDialogOpen(false);
+          }}
+        />
+      )}
       {newStudentDialogOpen && (
         <StudentDialog
           title={"新添学生"}
@@ -53,14 +70,41 @@ const StudentManagement: React.FC<Props> = () => {
           type="new"
         />
       )}
+      {modifiedStudent && editStudentDialogOpen && (
+        <StudentDialog
+          title={"修改学生"}
+          student={modifiedStudent}
+          onClose={() => {
+            setEditStudentDialogOpen(false);
+            setModifiedStudent(null);
+          }}
+          type="edit"
+        />
+      )}
+      {courseDialogOpen && (
+        <CourseDialog
+          onClose={() => {
+            setCourseDialogOpen(false);
+          }}
+        />
+      )}
+      {logDialogOpen && logStudentId && (
+        <StudentLogDialog
+          id={logStudentId}
+          onClose={() => {
+            setLogDialogOpen(false);
+          }}
+        />
+      )}
       <ActionsPanel
         onCreateNewClick={() => {
           setNewStudentDialogOpen(true);
         }}
         onRegisterClick={() => {
-          enqueueSnackbar("还未实现此功能", {
-            variant: "error",
-          });
+          setSignDialogOpen(true);
+        }}
+        onModifyCourseClick={() => {
+          setCourseDialogOpen(true);
         }}
       />
       <MaterialTable
@@ -81,6 +125,7 @@ const StudentManagement: React.FC<Props> = () => {
             },
             width: "10%",
           },
+          { title: "课时", field: "course", width: "10ß%" },
           { title: "备注", field: "comment", width: "35%" },
         ]}
         data={studentInfo}
@@ -148,12 +193,19 @@ const StudentManagement: React.FC<Props> = () => {
         }}
         actions={[
           {
+            icon: () => <Book />,
+            tooltip: "查看学生课时日志",
+            onClick: (event, rowData) => {
+              setLogStudentId((rowData as Student).id);
+              setLogDialogOpen(true);
+            },
+          },
+          {
             icon: () => <Edit />,
             tooltip: "编辑学生",
             onClick: (event, rowData) => {
-              enqueueSnackbar("还未实现此功能", {
-                variant: "error",
-              });
+              setModifiedStudent(rowData as Student);
+              setEditStudentDialogOpen(true);
             },
           },
           (rowData) => ({

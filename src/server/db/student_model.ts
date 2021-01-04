@@ -1,10 +1,10 @@
 import { Model, BuildOptions, DataTypes, Sequelize } from "sequelize";
 import { Student, StudentStatus } from "../types";
 
-export interface StudentModel extends Model, Student {}
+export interface StudentModel extends Model, Student { }
 
 type StudentModelStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): StudentModel;
+  new(values?: object, options?: BuildOptions): StudentModel;
 };
 
 export default function (sequelize: Sequelize): StudentModelStatic {
@@ -49,6 +49,10 @@ export default function (sequelize: Sequelize): StudentModelStatic {
       wechat: {
         type: DataTypes.STRING,
         defaultValue: "",
+      },
+      course: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
       },
     },
     {
